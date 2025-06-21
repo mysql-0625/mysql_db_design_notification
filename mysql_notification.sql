@@ -46,5 +46,52 @@ SELECT * FROM notification WHERE user_id = "hasan";
 SELECT * FROM notification WHERE (user_id = "hasan" OR user_id IS NULL);
 SELECT * FROM notification WHERE (user_id = "hasan" OR user_id IS NULL) ORDER BY create_at DESC;
 
+-- CATEGORY
+CREATE TABLE category (
+	id VARCHAR(100) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+SHOW TABLES;
+
+ALTER TABLE notification -- add column baru relasi dengan category di notif
+ADD COLUMN category_id VARCHAR(100);
+
+DESCRIBE notification;
+
+ALTER TABLE notification -- Relasi kategory ke notif -> one to many
+ADD CONSTRAINT fk_notification_category
+FOREIGN KEY (category_id) REFERENCES category(id);
+
+SELECT * FROM notification; -- disini field category_id masih kosong
+
+INSERT INTO category (id, name) VALUES ("INFO", "Info");
+INSERT INTO category (id, name) VALUES ("PROMO", "Promo");
+
+SELECT * FROM category;
+
+-- add category_id di notification
+UPDATE notification SET category_id = "INFO" WHERE id IN (1, 3);
+UPDATE notification SET category_id = "PROMO" WHERE id IN (2, 4);
+
+-- show data by join
+SELECT * FROM notification n JOIN CATEGORY c ON (n.category_id = c.id) WHERE (n.user_id = "hasan" OR n.user_id IS NULL) ORDER BY create_at DESC; -- notif untuk user hasan
+SELECT * FROM notification n JOIN CATEGORY c ON (n.category_id = c.id) WHERE (n.user_id = "hasan" OR n.user_id IS NULL) AND c.id = "PROMO" ORDER BY create_at DESC; -- notif untuk user hasan filter category promo
+SELECT * FROM notification n JOIN CATEGORY c ON (n.category_id = c.id) WHERE (n.user_id = "musa" OR n.user_id IS NULL) ORDER BY create_at DESC; -- notif untuk user musa
+SELECT * FROM notification n JOIN CATEGORY c ON (n.category_id = c.id) WHERE (n.user_id = "musa" OR n.user_id IS NULL) AND c.id = "INFO" ORDER BY create_at DESC; -- notif untuk user musa filter category info
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
