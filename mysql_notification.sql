@@ -122,6 +122,14 @@ ORDER BY create_at DESC;
 INSERT INTO notification (title, detail, category_id, create_at, user_id) VALUES ("Tambah Info lagi", "Detail Info", "INFO", CURRENT_TIMESTAMP(), "hasan");
 INSERT INTO notification (title, detail, category_id, create_at, user_id) VALUES ("Tambah Promo lagi", "Detail Promo", "PROMO", CURRENT_TIMESTAMP(), null);
 
+-- COUNTER
+SELECT COUNT(*) FROM notification n 
+JOIN category c ON (n.category_id = c.id) 
+LEFT JOIN notification_read nr ON (nr.notification_id = n.id)
+WHERE (n.user_id = "hasan" OR n.user_id IS NULL) 
+AND (nr.user_id IS NULL)
+ORDER BY create_at DESC; 
+
 
 
 
