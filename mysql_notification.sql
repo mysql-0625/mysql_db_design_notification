@@ -81,7 +81,46 @@ SELECT * FROM notification n JOIN CATEGORY c ON (n.category_id = c.id) WHERE (n.
 SELECT * FROM notification n JOIN CATEGORY c ON (n.category_id = c.id) WHERE (n.user_id = "musa" OR n.user_id IS NULL) ORDER BY create_at DESC; -- notif untuk user musa
 SELECT * FROM notification n JOIN CATEGORY c ON (n.category_id = c.id) WHERE (n.user_id = "musa" OR n.user_id IS NULL) AND c.id = "INFO" ORDER BY create_at DESC; -- notif untuk user musa filter category info
 
+-- NOTIFICATION READ
+CREATE TABLE notification_read(
+	id INT NOT NULL AUTO_INCREMENT,
+    is_read BOOLEAN NOT NULL,
+    notification_id INT NOT NULL,
+    user_id VARCHAR(100) NOT NULL,
+    PRIMARY KEY (id)
+);
 
+SHOW TABLES;
+
+ALTER TABLE notification_read -- relasi notification ke notification read -> one to many
+ADD CONSTRAINT fk_notification_read_notification
+FOREIGN KEY (notification_id) REFERENCES notification(id);
+
+ALTER TABLE notification_read -- relasi user ke notification read -> one to many
+ADD CONSTRAINT fk_notification_read_user
+FOREIGN KEY (user_id) REFERENCES user(id);
+
+DESC notification_read;
+
+SELECT * FROM notification;
+
+-- Set notification read unread
+INSERT INTO notification_read (is_read, notification_id, user_id) VALUES (true, 2, "hasan");
+INSERT INTO notification_read (is_read, notification_id, user_id) VALUES (true, 2, "musa");
+
+SELECT * FROM notification_read;
+
+-- Show data read unread join 2 table
+SELECT * FROM notification n 
+JOIN category c ON (n.category_id = c.id) 
+LEFT JOIN notification_read nr ON (nr.notification_id = n.id)
+WHERE (n.user_id = "hasan" OR n.user_id IS NULL) 
+AND (nr.user_id = "hasan" OR nr.user_id IS NULL)
+ORDER BY create_at DESC; 
+
+-- Coba add notification lagi dan pastikan dgn query diatas notification yg show bertambah
+INSERT INTO notification (title, detail, category_id, create_at, user_id) VALUES ("Tambah Info lagi", "Detail Info", "INFO", CURRENT_TIMESTAMP(), "hasan");
+INSERT INTO notification (title, detail, category_id, create_at, user_id) VALUES ("Tambah Promo lagi", "Detail Promo", "PROMO", CURRENT_TIMESTAMP(), null);
 
 
 
